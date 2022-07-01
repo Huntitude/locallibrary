@@ -1,7 +1,8 @@
+
 from django.db import models
 from django.urls import reverse # Used to generate URLs by reversing the URL patterns.
 import uuid
-
+from datetime import date
 
 # Create your models here.
 
@@ -54,7 +55,9 @@ class BookLanguage(models.Model):
 # BookInstance represents a specific copy of a book that someone might borrow
 class BookInstance(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, help_text='Unique ID for this particular book across the whole library')
-    book = models.ForeignKey('Book', on_delete=models.RESTRICT, null=True)
+    # book = models.ForeignKey('Book', on_delete=models.RESTRICT, null=True)
+    book = models.ForeignKey('Book', on_delete=models.SET_NULL, null=True)
+    
     imprint = models.CharField(max_length=200, blank=True, null=True)
     due_back = models.DateField(null=True, blank=True)
     
@@ -69,12 +72,12 @@ class BookInstance(models.Model):
         max_length=1,
         choices=LOAN_STATUS,
         blank=True,
-        default='m',
+        default='a',
         help_text='Book Availability'
     )
     
     class Meta:
-        ordering = ['due_back']
+        ordering = ['due_back', 'status']
         
     def __str__(self):
         return f'{self.id} ({self.book.title})'
@@ -89,6 +92,20 @@ class Author(models.Model):
     
     class Meta:
         ordering = ['last_name', 'first_name']
+        
+    @property
+    def author_age(self):
+        today = date.today()
+        try: 
+            birthday = self.date_of_birth.replace(year=today.year)
+        except ValueError: # raised when birth date is February 29 and the current year is not a leap year
+            birthday = self.date_of_birth.replace(year=today.year, month=self.date_of_birth.month+1, day=1)
+        if birthday > today:
+            return today.year - self.date_of_birth.year - 1
+        else:
+            return today.year - self.date_of_birth.year
+
+    
         
     def get_absolute_url(self):
         return reverse('author-detail', args=[str(self.id)])
