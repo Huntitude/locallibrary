@@ -1,0 +1,62 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+
+
+{% if next %}
+    {% if user.is_authenticated %}
+        <p>You account doesn't have access to this page. To proceed, please login with an account that has access.</p>
+        {% else %}
+        <p>Please Login to see this page.</p>
+    {% endif %}
+{% endif %}
+
+<div class="container registeration_login">
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h2 class="text-center text-dark mt-5">Local Library</h2>
+                {% if form.errors %}
+                    <p class="m-0 text-center text-danger"><strong>Username or password didn't match. Please try again.</strong></p>
+                {% endif %}            
+            <div class="card my-3">
+                <form class="text-center card-body cardbody-color p-lg-3" method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+                    <div class="text-center">
+                        <img src="https://images.unsplash.com/photo-1532012197267-da84d127e765?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80" class="img-fluid  my-3" alt="profile" />
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.username.label_tag }}
+                        {{ form.username }}
+                        <!-- <input type="text" class="form-control" id="Username" aria-describedby="emailHelp" placeholder="User Name" /> -->
+                    </div>
+                    <div class="mb-3">
+                        {{ form.password.label_tag }}
+                        {{ form.password }}
+
+                        <!-- <input type="password" class="form-control" id="password" placeholder="password" /> -->
+                    </div>
+                    <div class="text-center">
+                        <input type="submit" value="Login">
+                        <input type="hidden" name="next" value="{{ next }}">
+                        <!-- <button type="submit" class="btn btn-color px-5 mb-5 w-100">Login</button> -->
+                    </div>
+                    <div id="emailHelp" class="form-text text-center mb-2 p-2 text-dark">
+                        <p>Forgot <a href="{% url 'password_reset' %}">password?</a></p>
+                        <!-- <a href="#" class="text-dark fw-bold"> Create an Account</a> -->
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<form method="post" action="{% url 'login' %}">
+    {% csrf_token %}
+</form>
+
+
+{% endblock content %}

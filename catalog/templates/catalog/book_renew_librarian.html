@@ -1,0 +1,22 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<div class="container">
+    <h1>Renew: {{ book_instance.book.title }}</h1>
+    <p>Borrower: {{ book_instance.borrower }}</p>
+    <p {% if book_instance.is_overdue %} class="text-danger"{% endif %}>Due date: {{ book_instance.due_back }}</p>
+
+    <form action="" method="post">
+        {% csrf_token %}
+
+        <p {% if form.renewal_date.errors %} class="text-danger" {% endif %}>{{ form.renewal_date.errors }}</p>
+        
+
+        {{ form.renewal_date.label }}
+        {{ form.renewal_date }}<br>
+        {{ form.renewal_date.help_text }}<br>
+        <input type="submit" value="Submit">
+    </form>    
+</div>
+
+{% endblock %}

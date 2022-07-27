@@ -1,0 +1,11 @@
+.brr {border: 1px solid red;}
+a {text-decoration: none !important;}
+.errorlist{color: red;}
+
+
+/* REGISTERATION > LOGIN  */
+.registeration_login img{
+    width: 250px;
+    height: 250px;
+    border-radius: 50%;
+}

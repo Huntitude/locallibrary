@@ -1,5 +1,6 @@
 
 from django.db import models
+from django.contrib.auth.models import User
 from django.urls import reverse # Used to generate URLs by reversing the URL patterns.
 import uuid
 from datetime import date
@@ -55,9 +56,9 @@ class BookLanguage(models.Model):
 # BookInstance represents a specific copy of a book that someone might borrow
 class BookInstance(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, help_text='Unique ID for this particular book across the whole library')
+    borrower = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)    
     # book = models.ForeignKey('Book', on_delete=models.RESTRICT, null=True)
     book = models.ForeignKey('Book', on_delete=models.SET_NULL, null=True)
-    
     imprint = models.CharField(max_length=200, blank=True, null=True)
     due_back = models.DateField(null=True, blank=True)
     
@@ -76,11 +77,18 @@ class BookInstance(models.Model):
         help_text='Book Availability'
     )
     
+    @property
+    def is_overdue(self):
+        """Determines if the book is over due based on due date and current date"""
+        return bool(self.due_back and date.today() > self.due_back)
+
     class Meta:
         ordering = ['due_back', 'status']
+        permissions = (("can_mark_returned", "Set book as returned"),)
         
     def __str__(self):
         return f'{self.id} ({self.book.title})'
+    
 
 
 # Model representing an author
@@ -92,7 +100,8 @@ class Author(models.Model):
     
     class Meta:
         ordering = ['last_name', 'first_name']
-        
+    
+    # Calculates the authors age.   
     @property
     def author_age(self):
         today = date.today()

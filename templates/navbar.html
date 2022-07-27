@@ -7,9 +7,6 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="{% url 'index' %}">Home</a>
-                </li>
-                <li class="nav-item">
                     <a class="nav-link" href="/admin">Admin</a>
                 </li>
                 <li class="nav-item">
@@ -18,7 +15,37 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{% url 'authors' %}">All Authors</a>
                 </li>
-                
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'my-borrowed' %}">My Borrowed Books</a>
+                </li>
+                {% if perms.catalog.can_mark_returned %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'all-borrowed' %}">All Borrowed</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'book-create' %}">Create Book</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'author-create' %}">Create Author</a>
+                </li>
+                {% endif %}
+
+            </ul>
+        </div>
+        <div class="ms-auto">
+            <ul class="navbar-nav ">
+                {% if user.is_authenticated %}
+                    {% if user.is_staff %}
+                        <li class="nav-item p-2">Staff: {{ user.username|title }}</li>
+                    {% elif perms.catalog.can_mark_returned %}
+                        <li class="nav-item p-2">Librarian: {{ user.username|title }}</li>
+                    {% else %}
+                        <li class="nav-item p-2">User: {{ user.username|title }}</li>
+                    {% endif %}
+                    <li class="nav-item p-2"><a href="{% url 'logout' %}">Logout</a></li>
+                {% else %}
+                    <li class="nav-item"><a href="{% url 'login'%}?next={{request.path}}">Login</a></li>
+                {% endif %}
             </ul>
         </div>
     </div>

@@ -10,6 +10,9 @@
     <li>
         <a href="{{ author.get_absolute_url }}">{{ author.last_name|title }}, {{ author.first_name|title }}</a>
         (Book Count: {{ author.book_set.all.count }})
+        {% if user.is_staff %}
+            <p class="m-0 px-2"><a class="text-warning" href="{% url 'author-update' author.id %}">Edit</a> / <a class="text-danger" href="{% url 'author-delete' author.id %}">Delete</a></p>
+        {% endif %}
     </li>
     {% endfor %}
 </ul>
